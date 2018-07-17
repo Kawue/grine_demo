@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Manual</title>
+		<link rel="stylesheet" href="manual_style.css">
+	</head>
+	<body>
+		<h1>Manual DLC</h1>
+		<hr id=h1-line>
+		<h2> Load Data </h2>
+		<hr>
+		<p> Coming Soon </p>
+		<h2> Settings </h2>
+		<hr>
+		<p> The settings menu is in the upper right corner. It offers to switch between the graph and the circle packing layout.
+			One can adjust some properties of these layouts and last there are options regarding the MSI image representation.
+		</p>
+		<h3> Layout Switcher </h3>
+		<p> There are two buttons, Graph and Cicle Packing. A simple push changes to the visualizations that equals the label.
+		</p>
+		<h3> Layout Options (Graph) </h3>
+		<p> To adjust the graph layout two properties can be changed, the number of iterations before the layout algorithm stops and the charge multiplier. 
+			The number of iterations describes the amount of steps the algorithm has stabilize. 
+			If the maximal number is reached and the layout is still not stable, it will stop and keep its current form.<br>
+			The charge multiplier calculates the strength of repulsion of all nodes to each other. 
+			Setting it below/above one will decrease/increase the repulsion and the layout will contract/expand.
+		</p>
+		<h3> Layout Options (Circle Packing) </h3>
+		<p> Circle Packing offers the possibility to resize all most inner circles depending on either the mean intensity of the corresponding MSI image or the degree of the corresponding graph node.
+		</p>
+		<h3> MSI Image Options </h3>
+		<p> The Composition attribute affects the community images. In case of maximum every pixel of the community image consists of the maximum intensity of its member images.
+		For average at each pixel the arithmetic mean of all member images is calculated.<br>
+		The Colorscale property affects both, community image and m\z image. It will transform the value of each pixel linearly, depending on the chosen scale.
+		</p>
+		<h2> m/z Value List</h2>
+		<hr>
+		<p>The m\z value list consists of three parts. At the top the value of the node or circle is shown over which the mouse is hovering. Below that is lies the list with m/z values.<br>
+		This list show all values of the dataset if the application is loaded and if the clear button is pushed or the root of the circle packing is clicked.
+		With a click on a community node/circle or a m/z node/circle the list shows just the values of the corresponding community.<br>
+		If a value in the list is selected, the associated m/z image is shown in the image area, 
+		the correpsonding circle becomes encircled and depending whether the node is expanded or not itself or the community node is encircled too.
+		</p>
+		<h2> Image Area</h2>
+		<hr>
+		<h2> Graph </h2>
+		<hr>
+		<h2> Circle Packing </h2>
+		<hr>
+	</body>
+</html>
