@@ -1,0 +1,3 @@
+Schwarze Bilder sind das Ergebnis vom Winsorizing.
+Diese Bilder haben nur einzelne sehr intensive Pixel (Artefakte).
+Das Winsorizing entfernt diese vor dem Erstellen des Bildes.
