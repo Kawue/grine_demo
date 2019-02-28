@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Grine</title>
+		<link rel="stylesheet" href="css/style.css" type="text/css">
+		<script type="text/javascript" src="d3/d3.js"></script>
+		<script type="text/javascript" src="jquery/jquery-3.1.0.js"></script>
+	</head>
+	<body>
+	<!-- Header elements -->
+	<div id="header">
+		<p id="title">
+			<span id="title_short">Grine</span>
+			<span id="title_full">Analysis of 
+				<span class="title_abbreviation">Gr</span>aph mapped 
+				<span class="title_abbreviation">I</span>mage Data 
+				<span class="title_abbreviation">Ne</span>tworks
+			</span>
+		</p>
+		<div class="field" id="load">
+			<input id="load_path"></input>
+			<svg id="load_button_svg"></svg>
+			<p id="load_text">LOAD</p>
+		</div>
+		<img id="help_svg" src="images/symbols/help.svg">
+		<img id="info_svg" src="images/symbols/info.svg">
+	</div>
+	<div id="main">
+		<div class="field" id="left">
+			<p class="textfield" id="mzvalue_hover"></p>
+			<p class="textfield" id="mzlist_text"> <i>m/z</i> Values </p>
+			<select class="selectfield" id="mzlist" size="35" autocomplete="off"></select>
+			<button class="button" id="mzlist_clear"> Clear </button>
+		</div>
+		<div class="field" id="mid">
+			<div class="field" id="vis">
+			</div>
+			<div class="field" id="expanded_c_title">
+			<p class="textfield" id="expanded_c_text">Expanded Communities</p>
+			</div>
+			<div class="field" id="expanded_c"></div>
+		</div>
+		<div class="field" id="right">
+			<div class="field" id="settings">
+				<div class="field" id="vis_changer">
+					<button id="graph_vis" value="graph"> Graph </button>
+					<button id="circlepack_vis" value="circlepacking"> Circle Packing </button>
+				</div>
+				<div class="field" id="simulation_settings">
+					<p class="textfield" id="network_text"> Graph</p>
+					<p class="textfield" id="iterations_text"> Iterarions </p>
+					<select id="iterations_select" autocomplete="off">
+						<option value="250">250</option>
+						<option value="500" selected="selected">500</option>
+						<option value="750">750</option>
+						<option value="1000">1000</option>
+					</select>
+					<p class="textfield" id="charge_text"> Charge </p>
+					<select id="charge_select" autocomplete="off">
+						<option value="0.5">times 0.5</option>
+						<option value="0.75">times 0.75</option>
+						<option value="1" selected="selected">times 1</option>
+						<option value="2">times 2</option>
+						<option value="3">times 3</option>
+					</select>
+				</div>
+				<div class="field" id="circlepack_weighting">
+					<p class="textfield" id="circlepack_text"> Graph</p>
+					<p class="textfield" id="circlepack_weighting_text"> Circle Weighting </p>
+					<select id="circlepack_weighting_select" autocomplete="off">
+						<option value="intensity">Mean MSI Intensity</option>
+						<option value="degree">Degree</option>
+					</select>
+				</div>
+				<div class="field" id="msi_image_composition_settings">
+					<div class="box" id="msi_image_first_row">
+						<p class="textfield" id="msi_image_text"> Images</p>
+						<p class="textfield" id="msi_image_composition_text"> Composition </p>
+						<select id="msi_image_composition_select" autocomplete="off">
+							<option value="maximum" selected="selected">Maximum</option>
+							<option value="average">Average</option>
+						</select>
+						<p class="textfield" id="msi_image_colorscale_text"> Colorscale </p>
+						<select id="msi_image_colorscale_select" autocomplete="off">
+							<option value="none" selected="selected">None</option>
+							<option value="viridis">Viridis</option>
+							<option value="inferno">Inferno</option>
+							<option value="magma">Magma</option>
+							<option value="plasma">Plasma</option>
+							<option value="warm">Warm</option>
+							<option value="cool">Cool</option>
+							<option value="rainbow">Rainbow</option>
+							<option value="cubehelix">Cubehelix</option>
+						</select>
+					</div>
+					<div class="box" id="msi_image_second_row">		
+						<div class="box" id="pca_bg_box">
+							<input type="checkbox" id="pca_bg_checkbox" autocomplete="off">
+							<p class="textfield" id="pca_bg_checkbox_text"> Activate PCA Image </p>
+						</div>
+						<div class="box" id="pca_threshold_box">
+							<input type="range" id="pca_threshold_scale" min="0" max="1" value="0.5" step="0.1" autocomplete="off" disabled>
+							<p class="textfield" id="pca_threshold_chosen"> 0.5 </p>
+							<p class="textfield" id="pca_threshold_text"> Signal Intensity </p>
+						</div>
+						<div class="box" id="pca_dynamic_scale_box">
+							<input type="checkbox" id="pca_dynamic_scale_checkbox" autocomplete="off" disabled>
+							<p class="textfield" id="pca_dynamic_scale_checkbox_text"> Dynamic Threshold </p>
+						</div>
+					</div>	
+				</div>
+			</div>
+			<div class="field" id="stats_images">
+				<div class="field" id="colormap_wrapper">
+					<p class="textfield" id="colormap_text"><span style="float: left">0%</span> <span style="float: right">100%</span></p>
+					<canvas id="colormap_canvas"  width="0" height="0"></canvas>
+				</div>
+				<hr>
+				<!--<div class="field" id="bg_opacity_slider">
+					<p class="textfield" id="low_opacity_slider_text"> 0 </p>
+					<input class="slider" id="opacity_slider" type="range" min="0" max="1" value="0.5" step="0.1"/>
+					<p class="textfield" id="high_opacity_slider_text"> 1 </p>
+				</div>
+				<hr>-->
+				<div class="field" id="image_1">
+					<canvas class="msi_canvas" id="c_canvas" width="0" height="0"></canvas>
+				</div>		
+				<hr>
+				<div class="field" id="image_2">
+					<canvas class="msi_canvas" id="d_canvas" width="0" height="0"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="tooltip">Application is loading, please wait...</div>
+	<script src="helper.js"></script>
+	<script src="events.js"></script>
+	<script src="init.js"></script>
+	<script type="text/javascript">
+	// First argument is data
+	var dataPath = "/grine_demo/json_files/0.5477_glioblastoma_N3378_106_square_li.json";
+	// second argument is image folder
+	var msiImagePath = "/grine_demo/msi_images/glioblastoma_N3378_106_singlescale/";
+	
+	//Set radius for community nodes
+	var cNodeRadius = 15;
+	//Set radius for m/z-image nodes
+	var dNodeRadius = cNodeRadius/1.5;
+	//Set radius minimum for circlePacking circles
+	var circlePackingMinRadius = 1.5;
+	//Set height of the header into a global variable to make it globally accessible
+	var headerHeight = parseFloat(d3.select("#header").style("height")) - 2 * parseFloat(d3.select("#load").style("margin"));
+	var mzValues;
+	//Set height of the element which shows the graph into a global variable to make it globally accessible
+	var heightVis = parseFloat(d3.select("#vis").style("height"));
+	//Set width of the element which shows the graph into a global variable to make it globally accessible
+	var widthVis = parseFloat(d3.select("#vis").style("width"));
+	var heightMid = heightVis + parseFloat(d3.select("#expanded_c").style("height")) + parseFloat(d3.select("#expanded_c_title").style("height"));
+	//Set SVG, this contains the graph visualization
+	var svgGraphVis = d3.select("#vis")
+						.append("svg")
+						.attr("id", "graphSvg")
+						.attr("height", heightVis)
+						.attr("width", widthVis);
+	svgGraphVis.attr("display", "none");					
+	var svgCirclePackVis = d3.select("#vis")
+							.append("svg")
+							.attr("id", "circlepackSvg")
+							.attr("height", heightMid)
+							.attr("width", widthVis);
+	svgCirclePackVis.attr("display", "none");
+	svgGraphVis.attr("display", "auto");
+							
+	//Set ordinal color scale to give each community a different color
+	var color = d3.scaleOrdinal(d3.schemeCategory20);
+	//Global graph data variable
+	var graph;
+	//var graphStatic;
+	//Global Force Simulation variable
+	var forceSimulation;
+	//Global charge variable for c_nodes
+	var c_node_charge = -20;
+	//Global charge variable for d_nodes
+	var d_node_charge = -40;
+	//Global variable to indicate which community is currently displayed as community image
+	var paintedCommunity;
+	// Global variable to indicate which m/z-value is currently displayed
+	var paintedValue;
+	//Global variable to indicate which visualization type is active
+	var activeVis;
+	//Global Storage for all average composition community images
+	var meanImageDataObject;
+	var maximumImageDataObject;
+	//Static enums for flags of the clear canvas method
+	var clearCanvasFlags = Object.freeze({
+		C_CANVAS: "c_canvas",
+		D_CANVAS: "d_canvas",
+		BOTH: "both",
+	})
+	
+	window.onload = function(){
+		d3.select("#pca_threshold_chosen")
+			.text(d3.select("#pca_threshold_scale").property("value"));
+	};
+	
+	d3.select("#main").style("visibility", "hidden");
+/*	document.onreadystatechange = function(){
+										if(document.readyState === "complete"){
+											//Precalculate all ImageData objects of averaged community images
+											//This Methods starts after initMsiImages finished
+											initImageCompositions().done(
+												function(){
+													d3.select("#tooltip").style("display", "none");
+													d3.select("#main").style("visibility", "visible");
+												}
+											);
+										}
+									}*/
+	
+	//Load JSON
+	var loadJson = function(){
+		var finished = $.Deferred();
+		d3.json(dataPath, function(error, jsonData){
+			if(error){
+				return console.warn(error);
+			}else{
+				//Set JSON data into a global variable to make it globally accessible
+				graph = jsonData;
+				finished.resolve();
+			}
+		});
+		return finished;
+	}
+	
+	var init = function(){
+		//var finished = $.Deferred();
+		loadJson().done(function(){
+			//Deepcopy exploiting JSON.stringify. If object contains non-serializable properties, like functions, undefined, Infinity, etc, this is not usable.
+			//graphStatic = JSON.parse(JSON.stringify(graph));
+			//jQuery deepcopy method
+			//graphStatic = $.extend(true, {}, graph)
+				
+			//Isolate mzValues into a global variable to make it globally accessible
+			mzValues = graph.mz_values
+							.sort(function(a,b){
+								return d3.ascending(parseFloat(a),parseFloat(b));
+							}).slice();	
+			console.log("m/z Values Loaded.")
+			//Initialize forceSimulation into a global variable to make it globally accessible
+			forceSimulation = initSimulation();
+			console.log("Init Simulation Complete.")
+			//Initialize mz-List
+			fillMzList();
+			console.log("m/z-List Filled.")
+			//Initialize <g> elements for each kind of node and edge
+			initGraphGroups();
+			console.log("Init Graph Groups Complete.")
+			//Initialize the actual graph
+			initGraph();
+			console.log("Init Graph Complete.")
+			//Initialize groups in which expanded community nodes will be set
+			initExpandContainer(graph.c_nodes.length);
+			console.log("Init Expand Container Complete.")
+			//Initialize circle packing
+			initCirclePacking();
+			console.log("Init Circle Packing Complete.")
+			//Initialize Canvas MSI Images with text
+			initMsiCanvas();
+			console.log("Init MSI Canvas Complete.")
+			initColorMap();
+			console.log("Init ColorMap Complete.")
+			var loadImages = function(){
+				var finished = $.Deferred();
+				//Load all msi Images and add them as <img> elements into the body
+				initMsiImages();
+				console.log("MSI Images Loaded.");
+				
+				/*$(window).on("load", null, finished, function(){
+					finished.resolve();
+				});*/
+				
+				document.onreadystatechange = function(){
+					 if(document.readyState === 'complete'){
+						finished.resolve();
+					 }
+				}
+				
+				setTimeout(function(){
+				//Or set this in the initMsiImages() for loop and resolve it there if readyState is complete
+					if(document.readyState === "complete"){
+						finished.resolve();
+					}
+				},1000);
+				
+				return finished;
+			}
+
+			loadImages().done(function(){
+				initImageCompositions().done(function(){
+					console.log("Image Compositions Calculated.")
+					d3.select("#tooltip").style("display", "none");
+					d3.select("#main").style("visibility", "visible");
+				});
+			});
+					
+		});
+		//return finished;
+	}
+	
+	init();
+	
+	//init().done(function(){
+	//	d3.select("#tooltip").style("display", "none");
+	//	d3.select("#main").style("visibility", "visible");
+	//});
+	
+	//Set click functionality for the mz-List clear button
+	d3.select("#mzlist_clear")
+		.on("click", function(){
+			mzListClear();
+			clearCanvas(clearCanvasFlags.BOTH);
+			if(d3.select("#pca_bg_checkbox").property("checked") === true){
+				activate_pca_bg();
+			}
+		});
+		
+	d3.select("#msi_image_composition_select")
+		.on("change", function(){
+			paintedCommunity = null;
+		});
+	
+	d3.select("#graph_vis")
+		.on("click", function(){
+			changeVis(this.value);
+		});
+		
+	d3.select("#iterations_select")
+		.on("change", function(){
+			changeSimulationIteration(this.value);
+		});
+		
+	d3.select("#charge_select")
+		.on("change", function(){
+			changeSimulationCharge(this.value);
+		});
+		
+	d3.select("#circlepack_vis")
+		.on("click", function(){
+			changeVis(this.value);
+		});
+		
+	d3.select("#circlepack_weighting_select")
+		.on("change", function(){
+			repackCirclePacking(this.value)
+		});
+					
+	d3.select("#msi_image_colorscale_select")
+		.on("change", function(){
+			changeColorScale(null, true);
+			changeColorMap();
+		});
+		
+	d3.select("#msi_image_composition_select")
+		.on("change", function(){
+			changeColorScale(null, true);
+		});
+		
+	d3.select("#mzlist")
+		.on("change", function(d){
+			var value = this.value;
+			var community = graph.c_nodes.filter(
+								function(x){
+									var t = x.nodes.filter(
+										function(y){
+											if(y.name === value){
+												return y.membership;
+											}
+										}
+									); 
+									if(t.length>0){
+										return t
+									}
+								})[0].id;
+			d3.select("#c_canvas").datum(community);
+			d3.select("#d_canvas").datum(value);
+			changeColorScale(null, true);
+			d3.select(this).call(highlightElement);
+		})
+		.on("click", function(){
+			d3.select(this).call(highlightElement);
+		});
+		
+	d3.select("#pca_bg_checkbox")
+		.on("change", function(){
+			if(d3.select(this).property("checked") === true){
+				d3.select("#pca_threshold_scale").property("disabled", false);
+				d3.select("#pca_dynamic_scale_checkbox").property("disabled", false);
+				d3.select("#msi_image_colorscale_select").property("value", "none");
+				d3.select("#msi_image_colorscale_select").property("disabled", true);
+				changeColorMap();
+				threshold_pca();
+			}
+			else if (d3.select(this).property("checked") === false){
+				d3.select("#pca_threshold_scale").property("disabled", true);
+				d3.select("#pca_dynamic_scale_checkbox").property("disabled", true);
+				d3.select("#msi_image_colorscale_select").property("disabled", false);
+				//changeColorMap();
+				// set change changeColorFlag true to repaint the painted community which overrides the PCA background image
+				changeColorScale(null, true);
+			}
+		});
+	
+	d3.select("#pca_threshold_scale")
+		.on("change", function(){
+			// contains activate_pca_bg()
+			threshold_pca();
+		});
+		
+	d3.select("#pca_threshold_scale")
+		.on("input", function(){
+			d3.select(this).call(changePcaThresholdText);
+		});
+		
+	d3.select("#pca_dynamic_scale_checkbox")
+		.on("change", function(){
+			if(d3.select(this).property("checked") === true){
+				d3.select("#pca_threshold_scale").property("disabled", true);
+				threshold_pca();
+			} else if(d3.select(this).property("checked") === false){
+				d3.select("#pca_threshold_scale").property("disabled", false);
+				threshold_pca();
+			}
+		})
+	
+	</script>
+	<script src="header.js"></script>
+	</body>
+</html>
