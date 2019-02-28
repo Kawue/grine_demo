@@ -139,9 +139,9 @@
 	<script src="init.js"></script>
 	<script type="text/javascript">
 	// First argument is data
-	var dataPath = "/json_files/0.70854_barley.json";
+	var dataPath = "/json_files/" + window.location.search.substring(1).split("&")[0].split("=")[1];
 	// second argument is image folder
-	var msiImagePath = "/msi_images/barley_101_singlescale/";
+	var msiImagePath = "/msi_images/" + window.location.search.substring(1).split("&")[1].split("=")[1] + "/";
 	
 	//Set radius for community nodes
 	var cNodeRadius = 15;
