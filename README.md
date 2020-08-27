@@ -1,3 +1,9 @@
+# Info
+Please visit our new versions for community detection and visualization:
+
+https://github.com/Kawue/msi-community-detection
+https://github.com/Kawue/grine-v2/
+
 # grine_demo
 Pre-configurated version of Grine to reproduce the results for the following publication: tba
 
